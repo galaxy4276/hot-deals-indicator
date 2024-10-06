@@ -1,7 +1,9 @@
 # What is This?
 ---
 
-![banner.webp](public/service_banner.webp)
+<img src="public/service_banner.webp" width="240px" height="240px">
+
+> > Image Created By GPT
 
 실시간 핫딜 정보를 카카오톡으로 전달해주는 서비스 애플리케이션
 
