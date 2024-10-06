@@ -1,5 +1,8 @@
 # What is This?
 ---
+
+![banner.webp](public/service_banner.webp)
+
 실시간 핫딜 정보를 카카오톡으로 전달해주는 서비스 애플리케이션
 
 #### [서비스 아이디어 구상 및 소개 문서](https://woolly-hoodie-ae9.notion.site/11318d349b958068b39ee2468f477e9a?pvs=4)
