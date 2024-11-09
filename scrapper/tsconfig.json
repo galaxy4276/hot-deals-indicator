@@ -2,10 +2,11 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "commonjs",
-     "rootDir": "./",
+    "outDir": "./dist",
+    "rootDir": "./",
      "baseUrl": "./",
      "paths": {
-       "@/*": ["./src/*"],
+       "@/*": ["./src/*"]
      },
      "rootDirs": [],
      "typeRoots": [],

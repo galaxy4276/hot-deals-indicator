@@ -1,4 +1,9 @@
 import { Client } from "@elastic/elasticsearch";
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: ".env",
+});
 
 export default class ElasticProvider {
   private static instance: ElasticProvider;
@@ -7,10 +12,10 @@ export default class ElasticProvider {
 
   private constructor() {
     this.client = new Client({
-      node: "http://localhost:9200",
+      node: process.env.ELASTIC_HOST as string,
       auth: {
-        username: "elastic",
-        password: "chldmsrl12",
+        username: process.env.ELASTIC_ID as string,
+        password: process.env.ELASTIC_PASSWORD as string,
       },
     });
   }
