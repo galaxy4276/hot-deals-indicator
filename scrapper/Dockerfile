@@ -1,0 +1,19 @@
+FROM node:lts
+
+ARG ELASTIC_ID
+ARG ELASTIC_PASSWORD
+ARG ELASTIC_HOST
+
+ENV ELASTIC_ID=$ELASTIC_ID
+ENV ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+ENV ELASTIC_HOST=$ELASTIC_HOST
+
+WORKDIR /app
+COPY /src .
+COPY package.json .
+COPY pnpm-lock.yaml .
+COPY tsconfig.json .
+
+RUN ["npm", "install"]
+
+RUN ["npm", "run", "start"]
