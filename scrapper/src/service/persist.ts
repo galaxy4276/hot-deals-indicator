@@ -4,14 +4,11 @@ import { HotDealDetails } from "@/types";
 const { client } = ElasticProvider.getInstance();
 
 const create = async (hotDeals: HotDealDetails) => {
-  try {
-    await client.create({
-      index: "hot_deals",
-      id: hotDeals.id,
-      document: hotDeals,
-    });
-  } catch (error) {
-  }
+  await client.create({
+    index: "hot_deals",
+    id: hotDeals.id,
+    document: hotDeals,
+  });
 }
 
 const persist = async (hotDeals: HotDealDetails[]) => {
