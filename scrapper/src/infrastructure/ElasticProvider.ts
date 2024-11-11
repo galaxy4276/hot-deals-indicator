@@ -5,6 +5,10 @@ dotenv.config({
   path: ".env",
 });
 
+console.log("ELASTIC_HOST:", process.env.ELASTIC_HOST);
+console.log("ELASTIC_ID:", process.env.ELASTIC_ID);
+console.log("ELASTIC_PASSWORD:", process.env.ELASTIC_PASSWORD);
+
 export default class ElasticProvider {
   private static instance: ElasticProvider;
 
