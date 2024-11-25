@@ -1,8 +1,9 @@
 import { Page } from "puppeteer";
 import { HotDealDetails } from "@/types";
+import { Parser } from "@/scrap/types";
 
 
-export default class AlgumonParser {
+export default class AlgumonParser implements Parser {
   private readonly context: Page;
 
   constructor(context: Page) {
@@ -20,7 +21,7 @@ export default class AlgumonParser {
         const getIdFromLink = (link: string) =>link.match(/\w+\/\d+$/)?.[0];
 
         const hotDealsName =  getInnerText(element.querySelector(".product-link")) as string;
-        const price = getInnerText(element.querySelector(".product-price"));
+        const price = getInnerText(element.querySelector(".product-price"))?.replace("원", "");
         const link = getSharedLink(element.querySelector(".opinion-box > button:last-child")) as string;
         const id = getIdFromLink(link) as string;
 

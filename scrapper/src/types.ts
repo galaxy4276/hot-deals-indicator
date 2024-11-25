@@ -5,3 +5,8 @@ export type HotDealDetails = {
   link: string;
   dateCreated: string;
 }
+
+
+export type Checker = {
+  check(promisesResult: PromiseSettledResult<void>[]): string;
+};
