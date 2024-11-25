@@ -8,5 +8,5 @@ export default async function createPuppeteer(baseUrl: string) {
 
   await page.goto(baseUrl);
 
-  return [client, page] as [Browser, Page];
+  return page;
 }
