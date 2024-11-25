@@ -1,17 +1,20 @@
 import { Page } from "puppeteer";
-import { HotDealDetails } from "@/types";
+import { Category, HotDealDetails } from "@/types";
 import { Parser } from "@/scrap/types";
 
 
 export default class AlgumonParser implements Parser {
   private readonly context: Page;
+  private readonly category?: Category;
 
-  constructor(context: Page) {
+  constructor(context: Page, category?: Category) {
     this.context = context;
+    this.category = category;
   }
 
   public async getLatestHotDeals(): Promise<HotDealDetails[]> {
-    return this.context.evaluate(() => {
+    const category = this.category;
+    const deals =  await this.context.evaluate(() => {
       const postList = document.querySelector('.post-list');
       const items = Array.from(postList?.querySelectorAll("li.post-li") || []);
 
@@ -36,6 +39,8 @@ export default class AlgumonParser implements Parser {
 
       return items.map(getHotDeals);
     });
+
+    return deals.map(deals => ({ ...deals, category }));
   }
 
 }
