@@ -1,12 +1,14 @@
+from fastapi import FastAPI
 from fastapi import APIRouter, Request, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 import os
-import json
 import uuid
 import asyncio
-from database import search_products
 from websocket_manager import manager
+from observer import elasticsearch_observer
+from contextlib import asynccontextmanager
+
 
 router = APIRouter()
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,16 +26,23 @@ async def start_monitoring(request: Request):
     form_data = await request.form()
     email = form_data.get("email")
     product_name = form_data.get("product_name")
-    max_price = form_data.get("max_price")
+    
+    try:
+        max_price = int(form_data.get("max_price", "0"))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid max price value")
     
     session_id = str(uuid.uuid4())
-    user_sessions[session_id] = {
+    user_data = {
         "email": email,
         "product_name": product_name,
-        "max_price": max_price
+        "max_price": max_price  
     }
+    user_sessions[session_id] = user_data
+    elasticsearch_observer.register(session_id, user_data)
     
     return RedirectResponse(url=f"/results/{session_id}", status_code=303)
+
 
 @router.get("/results/{session_id}")
 async def get_results(request: Request, session_id: str):
@@ -48,6 +57,7 @@ async def get_results(request: Request, session_id: str):
         "max_price": user_data["max_price"]
     })
 
+
 @router.websocket("/ws/{session_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: str):
     if session_id not in user_sessions:
@@ -56,24 +66,19 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
     
     await manager.connect(websocket, session_id)
     try:
-        user_data = user_sessions[session_id]
-        asyncio.create_task(monitor_elasticsearch(user_data, session_id))
         while True:
             await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(session_id)
+        elasticsearch_observer.unregister(session_id)
 
-async def monitor_elasticsearch(user_data, client_id):
-    while True:
-        results = await search_products(user_data["product_name"], user_data["max_price"])
-        if results["hits"]["total"]["value"] > 0:
-            matching_products = [
-                {
-                    "name": hit["_source"]["name"],
-                    "price": hit["_source"]["price"],
-                    "link": hit["_source"]["link"]
-                }
-                for hit in results["hits"]["hits"]
-            ]
-            await manager.send_personal_message(json.dumps(matching_products), client_id)
-        await asyncio.sleep(10)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    observer_task = asyncio.create_task(elasticsearch_observer.notify())
+    yield
+    observer_task.cancel()
+    try:
+        await observer_task
+    except asyncio.CancelledError:
+        pass
