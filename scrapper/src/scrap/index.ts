@@ -7,14 +7,37 @@ import ParserExecutor from "@/scrap/service/ParserExecutor";
 
 const scrap = async () => {
   const executor = new ParserExecutor();
-  const [__, algumonPage] = await createPuppeteer(URL.ALGUMON_RECENT_LANKING);
-  const [_, aliExpressPage] = await createPuppeteer(URL.ALIEXPRESS_FREEMONEY_LIST);
+  const algumonOther = await createPuppeteer(URL.ALGUMON_CATEGORY.OTHER);
+  const algumonElectronic = await createPuppeteer(URL.ALGUMON_CATEGORY.ELECTRONIC);
+  const algumonFood = await createPuppeteer(URL.ALGUMON_CATEGORY.FOOD);
+  const algumonBeauty = await createPuppeteer(URL.ALGUMON_CATEGORY.BEAUTY);
+  const algumonEvent = await createPuppeteer(URL.ALGUMON_CATEGORY.EVENT);
+  const algumonApp = await createPuppeteer(URL.ALGUMON_CATEGORY.APP);
 
-  const algumonParser = new AlgumonParser(algumonPage);
+
+  const aliExpressPage = await createPuppeteer(URL.ALIEXPRESS_FREEMONEY_LIST);
+
+  const algumonOtherProductParser = new AlgumonParser(algumonOther, "기타");
+  const algumonElectronicProductParser = new AlgumonParser(algumonElectronic, "전자/IT");
+  const algumonFoodProductParser = new AlgumonParser(algumonFood, "식품/영앙제");
+  const algumonFoodBeautyParser = new AlgumonParser(algumonBeauty, "뷰티/패션");
+  const algumonFoodEventParser = new AlgumonParser(algumonEvent, "이벤트/상품권");
+  const algumonFoodAppParser = new AlgumonParser(algumonApp, "게임/앱");
+
+
   const aliExpressParser = new AliExpressParser(aliExpressPage);
 
-  executor.register(algumonParser);
-  executor.register(aliExpressParser);
+  const algumons = [
+    algumonOtherProductParser,
+    algumonElectronicProductParser,
+    algumonFoodProductParser,
+    algumonFoodBeautyParser,
+    algumonFoodEventParser,
+    algumonFoodAppParser,
+  ];
+
+  algumons.forEach(parser => executor.register(parser));
+  // executor.register(aliExpressParser);
 
   return executor.execute();
 };

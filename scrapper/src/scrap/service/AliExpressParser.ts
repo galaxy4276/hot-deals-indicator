@@ -1,12 +1,14 @@
-import { HotDealDetails } from "@/types";
+import { Category, HotDealDetails } from "@/types";
 import { Page } from "puppeteer";
 import { Parser } from "@/scrap/types";
 
 export default class AliExpressParser implements Parser {
   private readonly context: Page;
+  private readonly category?: Category;
 
-  constructor(context: Page) {
+  constructor(context: Page, category?: Category) {
     this.context = context;
+    this.category = category;
   }
 
   public async getLatestHotDeals(): Promise<HotDealDetails[]> {
