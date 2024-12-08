@@ -1,6 +1,9 @@
 from fastapi import WebSocket
+import asyncio
+from interfaces import NotificationService
+import json
 
-class ConnectionManager:
+class WebSocketNotificationService(NotificationService):
     def __init__(self):
         self.active_connections = {}
 
@@ -9,10 +12,12 @@ class ConnectionManager:
         self.active_connections[client_id] = websocket
 
     def disconnect(self, client_id: str):
-        del self.active_connections[client_id]
-
-    async def send_personal_message(self, message: str, client_id: str):
         if client_id in self.active_connections:
-            await self.active_connections[client_id].send_text(message)
+            del self.active_connections[client_id]
 
-manager = ConnectionManager()
+    async def send_notification(self, session_id: str, products: list):
+        if session_id in self.active_connections:
+            try:
+                await self.active_connections[session_id].send_text(json.dumps(products))
+            except Exception as e:
+                print(f"Failed to send notification to {session_id}: {str(e)}")
