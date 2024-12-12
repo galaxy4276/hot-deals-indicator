@@ -2,10 +2,14 @@ from typing import Union
 
 from fastapi import FastAPI
 from elasticsearch import Elasticsearch
+from env import env
+from visual.visualization import Visualizer
 
 app = FastAPI()
-es = Elasticsearch(["http://han-box.co.kr:9200"],
-                   basic_auth=("elastic", "rhehdgur12"))
+es = Elasticsearch(
+    ["http://han-box.co.kr:9200"],
+    basic_auth=(env["ELASTIC_ID"], env["ELASTIC_PASSWORD"])
+)
 
 
 @app.get("/")
@@ -74,6 +78,13 @@ def search_items(q: str):
         "dateCreated": hit['_source'].get('dateCreated')
     } for hit in hits]
     return {"items": items}
+
+@app.get("/visualization")
+def get_visualization_image(product: str):
+    visualizer = Visualizer()
+    visualizer.create()
+    return None
+
 
 if __name__ == "__main__":
     import uvicorn
