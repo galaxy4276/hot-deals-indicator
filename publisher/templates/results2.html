@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Monitoring Results</title>
+</head>
+
+<body>
+    <h1>Monitoring Results for {{ email }}</h1>
+
+    <h2>New Products:</h2>
+    <ul id="productList"></ul>
+
+    <script>
+        const productList = document.getElementById('productList');
+        const ws = new WebSocket(`ws://localhost:8000/ws/{{ session_id }}`);
+
+        ws.onmessage = function (event) {
+            const products = JSON.parse(event.data);
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.textContent = `Name: ${product.name}, Price: ${product.price}, Link: ${product.link}`;
+                productList.appendChild(li);
+            });
+        };
+    </script>
+</body>
+
+</html>

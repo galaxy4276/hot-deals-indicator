@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Monitoring Results</title>
+</head>
+
+<body>
+    <h1>Monitoring Results for {{ email }}</h1>
+    <p>포함 상품명: {{ product_name }}</p>
+    <p>설정된 최대 상한 금액: {{ max_price }}</p>
+
+    <h2>매칭 상품들:</h2>
+    <ul id="productList"></ul>
+
+    <script>
+        const productList = document.getElementById('productList');
+        const ws = new WebSocket(`ws://localhost:8000/ws/{{ session_id }}`);
+
+        ws.onopen = function () {
+            console.log("WebSocket connection established");
+        };
+
+        ws.onmessage = function (event) {
+            const products = JSON.parse(event.data);
+            productList.innerHTML = '';
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.textContent = `Name: ${product.name}, Price: ${product.price}, Link: ${product.link}`;
+                productList.appendChild(li);
+            });
+        };
+
+        ws.onerror = function (error) {
+            console.error("WebSocket error:", error);
+        };
+    </script>
+</body>
+
+</html>
