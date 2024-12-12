@@ -4,15 +4,16 @@ import { Parser } from "@/scrap/types";
 
 
 export default class AlgumonParser implements Parser {
-  private readonly context: Page;
-  private readonly category?: Category;
+  private context?: Page;
+  private category?: Category;
 
-  constructor(context: Page, category?: Category) {
+  constructor(context?: Page, category?: Category) {
     this.context = context;
     this.category = category;
   }
 
   public async getLatestHotDeals(): Promise<HotDealDetails[]> {
+    if (!this.context) return [];
     const category = this.category;
     const deals =  await this.context.evaluate(() => {
       const postList = document.querySelector('.post-list');
@@ -37,10 +38,21 @@ export default class AlgumonParser implements Parser {
         };
       };
 
-      return items.map(getHotDeals);
+      this.context?.close();
+      return items
+        .map(getHotDeals)
+        .map(d => ({ ...d }));
     });
 
     return deals.map(deals => ({ ...deals, category }));
+  }
+
+  protected setContext(context: Page): void {
+    this.context = context;
+  }
+
+  protected setCategory(category: Category): void {
+    this.category = category;
   }
 
 }
