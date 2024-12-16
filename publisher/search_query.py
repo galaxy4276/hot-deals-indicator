@@ -21,9 +21,10 @@ class ElasticsearchProductSearchService(ProductSearchService):
         ]
         
         category = info.get('category')
-        if category:
+        if category and category != "모든 카테고리":
             must_clauses.append({"match": {"category": category}})
-        
+    
+
         query = {
             "query": {
                 "bool": {

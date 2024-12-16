@@ -7,6 +7,8 @@
 
 <body>
     <h1>Monitoring Results for {{ email }}</h1>
+    <p>선택 카테고리: {{ category }}</p>
+
     <p>포함 상품명: {{ product_name }}</p>
     <p>설정된 최대 상한 금액: {{ max_price }}</p>
 
@@ -26,7 +28,7 @@
             productList.innerHTML = '';
             products.forEach(product => {
                 const li = document.createElement('li');
-                li.textContent = `Name: ${product.name}, Price: ${product.price}, Link: ${product.link}`;
+                li.textContent = `Categoty : ${product.category} | Name: ${product.name} | Price: ${product.price} | Link: ${product.link}`;
                 productList.appendChild(li);
             });
         };
