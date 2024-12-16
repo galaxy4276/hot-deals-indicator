@@ -11,6 +11,8 @@
 
 # Introduce
 
+<img src="public/dashboard.png" width="920px" />
+
 다양한 소스로부터 정형화된 할인 제품 데이터들을 수집하여 사용자의 니즈에 맞는 정보로
 시각화하여 보여준다.
 
