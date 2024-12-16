@@ -31,11 +31,12 @@ class UserSessionManager:
     def __init__(self):
         self.user_sessions = {}
 
-    def create_session(self, email: str, product_name: str, max_price: int) -> str:
+    def create_session(self, email: str, product_name: str, category: str,max_price: int) -> str:
         session_id = str(uuid.uuid4())
         self.user_sessions[session_id] = {
             "email": email,
             "product_name": product_name,
+            "category" : category,
             "max_price": max_price
         }
         return session_id
@@ -58,13 +59,14 @@ async def start_monitoring(request: Request):
     form_data = await request.form()
     email = form_data.get("email")
     product_name = form_data.get("product_name")
-    
+    category = form_data.get("category")
+
     try:
         max_price = int(form_data.get("max_price", "0"))
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid max price value")
     
-    session_id = user_session_manager.create_session(email, product_name, max_price)
+    session_id = user_session_manager.create_session(email, product_name, category,max_price)
     user_data = user_session_manager.get_session(session_id)
     elasticsearch_observer.register(session_id, user_data)
     
@@ -80,6 +82,8 @@ async def get_results(request: Request, session_id: str):
         "request": request,
         "session_id": session_id,
         "email": user_data["email"],
+        "product_name": user_data["product_name"],
+        "category": user_data["category"],
         "max_price": user_data["max_price"]
     })
 

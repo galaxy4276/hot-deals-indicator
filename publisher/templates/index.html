@@ -12,6 +12,17 @@
         <input type="email" id="email" name="email" required><br><br>
         <label for="product_name">상품명 : </label>
         <input type="text" id="product_name" name="product_name" required><br><br>
+        <label for="category">카테고리 : </label>
+        <select id="category" name="category" required>
+            <option value="">카테고리를 선택하세요</option>
+            <option value="">모든 카테고리</option>
+            <option value="전자/IT">전자/IT</option>
+            <option value="식품/영양제">식품/영양제</option>
+            <option value="뷰티/패션">뷰티/패션</option>
+            <option value="게임/앱">게임/앱</option>
+            <option value="이벤트/상품권">이벤트/상품권</option>
+            <option value="기타">기타</option>
+        </select><br><br>
         <label for="max_price">최대 가격 : </label>
         <input type="number" id="max_price" name="max_price" required><br><br>
         <button type="submit">모니터링 시작</button>
@@ -23,7 +34,7 @@
         let ws;
 
         form.addEventListener('submit', function (e) {
-            
+            // Submit event handling code here if needed
         });
     </script>
 </body>

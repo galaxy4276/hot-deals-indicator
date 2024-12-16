@@ -15,14 +15,19 @@ class ElasticsearchProductSearchService(ProductSearchService):
         )
 
     async def search_products(self, info: dict) -> list:
+        must_clauses = [
+            {"match": {"name": info.get('product_name')}},
+            {"range": {"price": {"lte": info.get('max_price', float('inf'))}}}
+        ]
+        
+        category = info.get('category')
+        if category:
+            must_clauses.append({"match": {"category": category}})
+        
         query = {
             "query": {
                 "bool": {
-                    "must": [
-                        {"match_all": {}},
-                        # {"match": {"name": info.get('product_name')}},
-                        {"range": {"price": {"lte": info.get('max_price', float('inf'))}}}
-                    ]
+                    "must": must_clauses
                 }
             },
             "sort": [{"dateCreated": {"order": "desc"}}],
